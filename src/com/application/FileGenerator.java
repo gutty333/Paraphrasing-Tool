@@ -6,11 +6,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,7 +19,7 @@ import org.jsoup.select.Elements;
 public class FileGenerator implements Runnable
 {
 	private static Queue<String> originalWords = new ArrayDeque<>();
-	private static Map<String, List<String> > table = new HashMap<>();
+	private static ConcurrentHashMap<String, List<String> > table = new ConcurrentHashMap<>();
 	public static String inputName;
 	public static String outputName;
 	
