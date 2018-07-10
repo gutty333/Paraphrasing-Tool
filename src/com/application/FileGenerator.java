@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -18,6 +20,7 @@ import org.jsoup.select.Elements;
 public class FileGenerator implements Runnable
 {
 	private static Queue<String> originalWords = new ArrayDeque<>();
+	private static Map<String, List<String> > table = new HashMap<>();
 	public static String inputName;
 	public static String outputName;
 	
@@ -26,45 +29,57 @@ public class FileGenerator implements Runnable
 	{
 		try(Scanner reader = new Scanner(new File(inputName)))
 		{
-			while (reader.hasNext())
+			while (reader.hasNextLine())
 			{
-				// getting the current possible word
-				String currentWord = reader.next();
+				// getting the current line
+				String currentWord = reader.nextLine();
+				
+				// storing the possible words
+				String[] wordList = currentWord.split(" ");
 				
 				StringBuilder newWord = new StringBuilder();
 				
-				// validating the string
-				for (Character current: currentWord.toCharArray())
+				// validating each space separated string
+				for (int x = 0; x < wordList.length; x++)
 				{
-					if (Character.isLetter(current))
+					for (Character current: wordList[x].toCharArray())
 					{
-						newWord.append(current);
-					}
-					else
-					{
-						// case conditions when multiple words are read
-						// or other special cases such as apostrophes 
-						if (newWord.length() > 0)
+						if (Character.isLetter(current))
 						{
-							originalWords.add(newWord.toString());
+							newWord.append(current);
 						}
-						
-						originalWords.add(current.toString());
-						
-						// resetting the new word
+						else
+						{
+							// case conditions when multiple words are read
+							// or other special cases such as apostrophes 
+							if (newWord.length() > 0)
+							{
+								originalWords.add(newWord.toString());
+							}
+							
+							originalWords.add(current.toString());
+							
+							// resetting the new word
+							newWord.setLength(0);
+						}
+					}
+					
+					// storing the word
+					if (newWord.length() > 0)
+					{
+						originalWords.add(newWord.toString());
 						newWord.setLength(0);
 					}
+					
+					// adding space separator
+					originalWords.add(" ");
 				}
 				
-				// storing the word
-				if (newWord.length() > 0)
+				// adding a new line
+				if (reader.hasNextLine())
 				{
-					originalWords.add(newWord.toString());
-					newWord.setLength(0);
+					originalWords.add("\n");
 				}
-				
-				// adding space separator
-				originalWords.add(" ");
 			}
 		} 
 		catch (FileNotFoundException e)
@@ -82,6 +97,7 @@ public class FileGenerator implements Runnable
 			{
 				// threshold condition to limit which words we replace
 				// good range is avoid words with lengths less than 3 or 4
+				// but can be easily customized to the user's need
 				if (originalWords.peek().length() <= 4)
 				{
 					writer.print(originalWords.remove());
@@ -118,15 +134,29 @@ public class FileGenerator implements Runnable
 		// section on replacing with possible synonyms
 		List<String> sysnonymsList = new ArrayList<>();
 		
-		// utilizing data from public thesaurus
-		String url = "http://www.thesaurus.com/browse/" + result;
-		Document document = Jsoup.connect(url).get();
-		Elements content = document.getElementsByClass("css-1hn7aky e1s2bo4t1");
-		
-		// collecting the synonyms
-		for (Element current : content)
+		// checking if current word has already been recorded
+		// this is done to improve performance and avoid making request for already encountered words
+		if (table.containsKey(result))
 		{
-			sysnonymsList.add(current.text());
+			// get the list of the synonyms already collected for this word
+			sysnonymsList = table.get(result);
+		}
+		else
+		{
+			// if word is unique make a new request
+			// utilizing data from public thesaurus 
+			String url = "http://www.thesaurus.com/browse/" + result;
+			Document document = Jsoup.connect(url).get();
+			Elements content = document.getElementsByClass("css-1hn7aky e1s2bo4t1");
+			
+			// collecting the synonyms from the page
+			for (Element current : content)
+			{
+				sysnonymsList.add(current.text());
+			}
+			
+			// saving this record into our table
+			table.put(result, sysnonymsList);
 		}
 		
 		// either leaving the original in place or selecting a random synonym
@@ -150,6 +180,5 @@ public class FileGenerator implements Runnable
 	{
 		readFile();
 		writeFile();
-		
 	}
 }

@@ -1,0 +1,26 @@
+preface
+I first got into programming as a hobby. Visual Basic 6 for Dummies
+taught me the basics, and I kept reading books to learn more. But the
+subject of algorithms was impenetrable for me. I remember savoring
+the table of contents of my first algorithms book, thinking “I’m finally
+going to understand these topics!” But it was dense stuff, and I gave
+up after a few weeks. It wasn’t until I had my first good algorithms
+professor that I realized how simple and elegant these ideas were.
+A few years ago, I wrote my first illustrated blog post. I’m a visual
+learner, and I really liked the illustrated style. Since then, I’ve written
+a few illustrated posts on functional programming, Git, machine
+learning, and concurrency. By the way: I was a mediocre writer when
+I started out. Explaining technical concepts is hard. Coming up with
+good examples takes time, and explaining a difficult concept takes time.
+So it’s easiest to gloss over the hard stuff. I thought I was doing a pretty
+good job, until after one of my posts got popular, a coworker came up
+to me and said, “I read your post and I still don’t understand this.” I still
+had a lot to learn about writing.
+Somewhere in the middle of writing these blog posts, Manning reached
+out to me and asked if I wanted to write an illustrated book. Well, it
+turns out that Manning editors know a lot about explaining technical
+concepts, and they taught me how to teach. I wrote this book to scratch
+a particular itch: I wanted to write a book that explained hard technical
+topics well, and I wanted an easy-to-read algorithms book. My writing
+has come a long way since that first blog post, and I hope you find this
+book an easy and informative read.
